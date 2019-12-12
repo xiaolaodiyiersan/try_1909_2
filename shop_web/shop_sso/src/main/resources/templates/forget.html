@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base th:href="${#request.getContextPath()+'/'}">
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/jquery.js"></script>
+</head>
+<body>
+<script>
+    function toSendEmail(a){
+        var username = $("#username").val();
+        $(a).attr('disabled','disabled');
+        djs(a);
+        $.ajax({
+            url:"/forget/sendEmail",
+            data:{"username":username},
+            success:function (data) {
+                if(data.code == "500"){
+                    alert("用户名不存在");
+                }else{
+                    var a = data.data.showEmail;
+                    var b = data.data.toEmail;
+                    $("#msg").html("已发送到邮箱"+a+"，<a href='http://mail."+b+"'>点击</a>跳转")
+                }
+
+            }
+        });
+     }
+     time = 10;
+   function djs(a){
+       if(time == 0){
+           $(a).removeAttr("disabled");
+           $(a).html("修改密码");
+           time == 10 ;
+           return;
+       }
+        $(a).html("邮件已发送("+time+")");
+        time--;
+        setTimeout(function () {
+            djs(a);
+        },1000);
+   }
+</script>
+请输入用户名：<input id="username" type="text" ><span id="msg"></span><br>
+<button onclick="toSendEmail(this)">修改密码</button>
+</body>
+</html>
